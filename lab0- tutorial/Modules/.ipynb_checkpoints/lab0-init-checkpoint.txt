@@ -1,0 +1,145 @@
+import os
+import sem
+import base64
+import re
+from IPython.display import display, Markdown, Latex
+import json
+
+
+#print("Current working directory: {0}".format(os.getcwd()))                                # To get cwd
+
+print("List of created simulations: ")
+print(" ")
+
+ns_path = os.path.normpath(os.path.join(os.getcwd(), '../../', 'ns-3'))            # Path for simulation purposes
+script = 'lab0'                                                                    # NS3 Script to run, (change name here)
+
+params_directory = os.path.normpath(os.path.join(os.getcwd(), '../../', 'ttm4133-servers', 'files-upload', 'Labs', 'Lab0'))  # Directory with simulation params
+
+img_directory = os.path.normpath(os.path.join(os.getcwd(), '../../', 'ttm4133-servers', 'files-upload', 'Images', 'Lab0'))  # Directory with simulation params
+
+imgout_dir = os.path.normpath(os.path.join(os.getcwd(), '../../', 'ttm4133-summer22', 'lab0', 'Figures'))                   # Directory to save images
+
+json_data = []
+
+# Print all simulations
+for filename in os.listdir(params_directory):
+  f = os.path.join(params_directory, filename)
+  if os.path.isfile(f) and filename.endswith('.txt'):
+    temp = filename.split('-')
+    temp2 = temp[1].split('.')
+    print(temp2[0])
+
+print("")
+print("")
+
+
+simulationName = input("List the simulation to run: ")                                         # String with simulation name
+showTopos = input("Show a picture of the topology? (y/n)")
+
+
+#Show picture
+if showTopos == 'y':
+    print("Generating topology pictures...")
+    p = open(img_directory + "/base64Image-{}.txt".format(simulationName), "r")
+    image_result = open(imgout_dir + '/GeneratedImages/image {}.png'.format(simulationName), 'wb')
+    image = p.read().split(",")
+    imageRaw = image[1]
+    image_result.write(base64.b64decode(imageRaw))
+    markdownDisplay = '<img src="./Figures/Lab0/GeneratedImages/image-{}.png" alt = "test pic" style="background-color: white;"> '.format(simulationName)
+    display(Markdown(markdownDisplay))
+
+
+
+
+# Get sim params
+for filename in os.listdir(params_directory): 
+
+    if os.path.isfile(f) and filename.endswith('{}.txt'.format(simulationName)):
+        f = os.path.join(params_directory, filename)
+        with open(f, 'r') as fobj:
+            json_data = json.load(fobj)
+
+
+
+
+
+
+uetemp = []
+for ue in json_data["ueList"]:
+    uetemp.append('(' + str(ue['x']) + ',' + str(ue['y']) + '),')
+
+enbtemp = []
+for ue in json_data["eNBList"]:
+    enbtemp.append('(' + str(ue['x']) + ',' + str(ue['y']) + '),')
+
+
+buildingtemp = []
+for ue in json_data["buildingList"]:
+    enbtemp.append('(' + str(ue['x']) + ',' + str(ue['y']) + '),')
+
+txpower = int(json_data["txPower"])
+
+uePos = ''.join(uetemp)
+eNBPos = ''.join(enbtemp)
+buildingPos = ''.join(buildingtemp)
+
+if buildingPos == '':
+    buildingPos = '()'
+
+
+print(uePos)
+print(eNBPos)
+print(txpower)
+print(buildingPos)
+
+
+##########################################################################################
+# Run simulation
+print("Signal Power Received simualtions...")
+
+
+res_path = 'results-rsrp'+ '-' + temp[1]                                # result path for naming outstreams
+campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', res_path))
+campaign = sem.CampaignManager.new(ns_path, script, campaign_dir, overwrite=True,           #create a new sem campaign
+                                   check_repo = False, max_parallel_processes=8)
+
+
+params = {
+    'arrayPosUEsString': uePos,
+    'arrayPosBuildingsString': buildingPos,
+    'enablersrp': True,
+    'eNBTxPowerDbm': txpower,
+    }
+
+runs = 1
+campaign.run_missing_simulations(params, runs=runs)
+result_signalpower = campaign.db.get_complete_results(params=params) #Results
+
+print(" Simulation done! ")
+
+##########################################################################################
+
+print("SINR simualtions...")
+
+
+res_path = 'results-sinr'+ '-' + temp[1]                             
+campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', res_path))
+
+
+
+campaign = sem.CampaignManager.new(ns_path, script, campaign_dir, overwrite=True,          
+                                   check_repo = False, max_parallel_processes=8)
+
+
+params = {
+    'arrayPosUEsString': uePos,
+    'arrayPosBuildingsString': buildingPos,
+    'enablesinrue': True,
+    'eNBTxPowerDbm': txpower,
+    }
+
+runs = 1
+campaign.run_missing_simulations(params, runs=runs)
+result_sinr = campaign.db.get_complete_results(params=params) #Results
+print("Simulations finished")    

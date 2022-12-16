@@ -231,11 +231,19 @@ Throughput1 (Time binSize, std::vector<double> throughPutVectors, std::vector<ui
   //std::cout << "this: "  <<throughPutVector.at(2) << std::endl;
 
 
-  std::cout << std::setw(9) << Simulator::Now ().GetSeconds ();
+  std::cout << std::setw(5) << Simulator::Now ().GetSeconds ();
 
   for (int i = 0; i < counterRP; i++)
   {
-    std::cout << std::setw(11) << throughPutVector.at(i);
+      if(i==0)
+        {
+          std::cout << std::setw(13) << throughPutVector.at(i);
+
+        }
+      else
+        {
+          std::cout << std::setw(20) << throughPutVector.at(i);
+        }
   }
 
 
@@ -280,15 +288,16 @@ int main (int argc, char *argv[])
 
   double enbDist = 300.0;
 
-  uint32_t numUes = 2;
+//  uint32_t numUes = 2;
   double simTime = 7; //  Time timeRes = MilliSeconds (10); // time resolution
   //  double speed = 500;       // m/s
   uint8_t numBearersPerUe = 1;
   double eNBTxPowerDbm = 40;  // range()
   uint16_t eNBDlEarfcn = 100;
-  uint16_t eNBBandwidth = 25;
+  uint16_t eNBBandwidth = 6;
   double hEnb = 30.0;
   double hUe = 1.0;
+  uint64_t runId =1 ;
 
 
   bool enablersrp = false, enablesinrenb = false, enablesinrue = false;
@@ -296,28 +305,32 @@ int main (int argc, char *argv[])
   bool enablebuilding = false, enableInstTput= false;
 
   //Parameters from GUI with buildings and UE positions
-  std::string arrayPosUEsString = "[(66.03,-940.34),(-148.56,27.50),]";
+//  std::string arrayPosUEsString = "[(341,506),(513,281),(800,706),(1000,381),]";
 //  std::string arrayPosBuildingsString = "[(0,0),]";
-  std::string arrayPoseNBsString = "[(0,0),]";
-  std::string arrayPosBuildingsString = "[]";
+//  std::string arrayPoseNBsString = "[(0,0), (800,500)]";
+//  std::string arrayPosBuildingsString = "[]";
 
+  std::string arrayPosUEsString, arrayPoseNBsString, arrayPosBuildingsString;
 
   CommandLine cmd (__FILE__);
-  cmd.AddValue ("enbDist", "distance between the two eNBs", enbDist);
-  cmd.AddValue ("numUes", "how many UEs are attached to each eNB", numUes);
   cmd.AddValue ("eNBTxPowerDbm", "base station power level", eNBTxPowerDbm);
-  cmd.AddValue ("enableflowstats", "get flow stats", enableflowstats);
   cmd.AddValue ("enablersrp", "get rsrp rsrq stats", enablersrp);
   cmd.AddValue ("enablesinrue", "get ue sinr stats", enablesinrue);
-  cmd.AddValue ("enablesinrenb", "get enb sinr stats", enablesinrenb);
   cmd.AddValue ("enableInstTput", "Enable instantenous throughput stats", enableInstTput);
-
-  //Pass parameters into variables
   cmd.AddValue ("arrayPosUEsString", "Positions of UEs", arrayPosUEsString);
   cmd.AddValue ("arrayPosBuildingsString", "Positions of UEs", arrayPosBuildingsString);
   cmd.AddValue ("arrayPoseNBsString", "Positions of eNBs", arrayPoseNBsString);
+  cmd.AddValue ("runId", "Randomization parameter", runId);
+
+  //TODO building creation in loop with cords.
+
+  ConfigStore inputConfig;
+  inputConfig.ConfigureDefaults ();
 
   cmd.Parse (argc, argv);
+
+
+  RngSeedManager::SetRun(runId);
 
   std::string newUEsString = cleanUpString(arrayPosUEsString);
   std::string neweNBsString = cleanUpString(arrayPoseNBsString);
@@ -330,10 +343,6 @@ int main (int argc, char *argv[])
 
 
 
-  //TODO building creation in loop with cords.
-
-  ConfigStore inputConfig;
-  inputConfig.ConfigureDefaults ();
 
   //double radius = enbDist/1;    DISABLE
 
@@ -347,14 +356,88 @@ int main (int argc, char *argv[])
 
   Config::SetDefault ("ns3::LteEnbPhy::TxPower", DoubleValue (eNBTxPowerDbm));
   Config::SetDefault ("ns3::LteUePhy::NoiseFigure", DoubleValue (ueNoise->GetValue()));
-  Config::SetDefault ("ns3::LteEnbPhy::NoiseFigure", DoubleValue          (enbNoise->GetValue()));
+  Config::SetDefault ("ns3::LteEnbPhy::NoiseFigure", DoubleValue (enbNoise->GetValue()));
   Config::SetDefault("ns3::LteEnbRrc::SrsPeriodicity", UintegerValue(80));
+
+
 
   Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
   Ptr<PointToPointEpcHelper> epcHelper = CreateObject<PointToPointEpcHelper> ();
   lteHelper->SetEpcHelper (epcHelper);
 
   Ptr<Node> pgw = epcHelper->GetPgwNode ();
+
+
+
+  if(enablebuilding)
+    {
+      Ptr<UniformRandomVariable> iwl = CreateObject<UniformRandomVariable> ();
+      iwl->SetAttribute ("Min", DoubleValue (1));
+      iwl->SetAttribute ("Max", DoubleValue (5));
+      Ptr<UniformRandomVariable> ssew = CreateObject<UniformRandomVariable> ();
+      ssew->SetAttribute ("Min", DoubleValue (1));
+      ssew->SetAttribute ("Max", DoubleValue (5));
+      Ptr<UniformRandomVariable> sso = CreateObject<UniformRandomVariable> ();
+      sso->SetAttribute ("Min", DoubleValue (1));
+      sso->SetAttribute ("Max", DoubleValue (7));
+      Ptr<UniformRandomVariable> ssi = CreateObject<UniformRandomVariable> ();
+      ssi->SetAttribute ("Min", DoubleValue (1));
+      ssi->SetAttribute ("Max", DoubleValue (8));
+
+      //BuildingsHelper::Install (movingueNodes);   DISABLE
+
+      //std::cout << "The amount of buildings in the list of BuildingsList object: " << BuildingList::GetNBuildings() << std::endl;
+
+      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
+      lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls", DoubleValue (ssew->GetValue()));
+      lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor", DoubleValue (sso->GetValue()));
+      lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor", DoubleValue (ssi->GetValue()));
+      lteHelper->SetPathlossModelAttribute ("InternalWallLoss", DoubleValue (iwl->GetValue()));
+
+     }
+  else
+    {
+      // lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::LogDistancePropagationLossModel"));
+      // lteHelper->SetPathlossModelAttribute("Exponent", DoubleValue (3.0));
+      // lteHelper->SetPathlossModelAttribute("ReferenceDistance", DoubleValue (10));
+      // lteHelper->SetPathlossModelAttribute("Frequency", DoubleValue (2120000000));
+
+
+      //  RngSeedManager::SetSeed (seed);  // Changes seed from default of 1 to 3
+
+        Ptr<UniformRandomVariable> d0 = CreateObject<UniformRandomVariable> ();
+        d0->SetAttribute ("Min", DoubleValue (1));
+        d0->SetAttribute ("Max", DoubleValue (5));
+        Ptr<UniformRandomVariable> d1 = CreateObject<UniformRandomVariable> ();
+        d1->SetAttribute ("Min", DoubleValue (200));
+        d1->SetAttribute ("Max", DoubleValue (250));
+        Ptr<UniformRandomVariable> d2 = CreateObject<UniformRandomVariable> ();
+        d2->SetAttribute ("Min", DoubleValue (500));
+        d2->SetAttribute ("Max", DoubleValue (600));
+        Ptr<UniformRandomVariable> e0 = CreateObject<UniformRandomVariable> ();
+        e0->SetAttribute ("Min", DoubleValue (1.75));
+        e0->SetAttribute ("Max", DoubleValue (2));
+        Ptr<UniformRandomVariable> e1 = CreateObject<UniformRandomVariable> ();
+        e1->SetAttribute ("Min", DoubleValue (3.4));
+        e1->SetAttribute ("Max", DoubleValue (4.4));
+        Ptr<UniformRandomVariable> e2 = CreateObject<UniformRandomVariable> ();
+        e2->SetAttribute ("Min", DoubleValue (4.8));
+        e2->SetAttribute ("Max", DoubleValue (5.8));
+
+
+      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
+      lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue(d0->GetValue()));
+      lteHelper->SetPathlossModelAttribute("Distance1", DoubleValue(d1->GetValue()));
+      lteHelper->SetPathlossModelAttribute("Distance2", DoubleValue(d2->GetValue()));
+      lteHelper->SetPathlossModelAttribute("Exponent0", DoubleValue(e0->GetValue()));
+      lteHelper->SetPathlossModelAttribute("Exponent1", DoubleValue(e1->GetValue()));
+      lteHelper->SetPathlossModelAttribute("Exponent2", DoubleValue(e2->GetValue()));
+//      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
+//      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
+//      channelHelper.AddPropagationLoss(fastFadingLModel);
+//      channelHelper.AddPropagationLoss(slowFadingLModel1);
+    }
+
 
 
   // Create a single remote host to act as hosts on the interent
@@ -482,6 +565,13 @@ int main (int argc, char *argv[])
   eNBmobility.SetPositionAllocator (positionAlloceNB); //why? // this doesnt seem nessecary //this has been fixed !
   eNBmobility.Install (eNBNodesArg);
 
+  if(enablebuilding)
+    {
+      BuildingsHelper::Install(eNBNodesArg);
+
+    }
+
+
 
   lteHelper->SetEnbDeviceAttribute ("DlEarfcn", UintegerValue (eNBDlEarfcn));
   lteHelper->SetEnbDeviceAttribute ("UlEarfcn", UintegerValue (eNBDlEarfcn + 18000));
@@ -507,150 +597,123 @@ int main (int argc, char *argv[])
   ue1mobility.Install (ueNodesArg);
 
 
+
+  if(enablebuilding)
+    {
+      BuildingsHelper::Install(ueNodesArg);
+
+    }
+
+
   //Objects to get <<cout
   Ptr<ConstantPositionMobilityModel> mmEnb = CreateObject<ConstantPositionMobilityModel> ();
   Ptr<ConstantPositionMobilityModel> mmUe1 = CreateObject<ConstantPositionMobilityModel> ();
   Ptr<ConstantPositionMobilityModel> mmUe2 = CreateObject<ConstantPositionMobilityModel> ();
 
-
-  if(enablebuilding)
-    {
-      BuildingsHelper::Install (eNBNodesArg);
-      BuildingsHelper::Install (ueNodesArg);
-      //BuildingsHelper::Install (movingueNodes);   DISABLE
-
-      //std::cout << "The amount of buildings in the list of BuildingsList object: " << BuildingList::GetNBuildings() << std::endl;
-
-      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
-      lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls", DoubleValue (2));
-      lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor", DoubleValue (2));
-      lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor", DoubleValue (2));
-
-     }
-  else
-    {
-      // lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::LogDistancePropagationLossModel"));
-      // lteHelper->SetPathlossModelAttribute("Exponent", DoubleValue (3.0));
-      // lteHelper->SetPathlossModelAttribute("ReferenceDistance", DoubleValue (10));
-      // lteHelper->SetPathlossModelAttribute("Frequency", DoubleValue (2120000000));
-
-      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
-      lteHelper->SetPathlossModelAttribute("Exponent0", DoubleValue (1.0));
-      lteHelper->SetPathlossModelAttribute("Exponent1", DoubleValue (3.0));
-      lteHelper->SetPathlossModelAttribute("Exponent2", DoubleValue (10.0));
-      lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue (100));
-      lteHelper->SetPathlossModelAttribute("Distance1", DoubleValue (200));
-      lteHelper->SetPathlossModelAttribute("Distance2", DoubleValue (400));
-//      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
-//      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
-//      channelHelper.AddPropagationLoss(fastFadingLModel);
-//      channelHelper.AddPropagationLoss(slowFadingLModel1);
-    }
-
-
-
-
-
-  Ptr<ThreeLogDistancePropagationLossModel> slowFadingLModel = CreateObject<ThreeLogDistancePropagationLossModel> ();
-
-//Other propagation models
-
-//  Ptr<FriisPropagationLossModel> slowFadingLModel1 = CreateObject<Cost231PropagationLossModel> ();
 //
-//  SpectrumChannelHelper channelHelper;
 //
-//  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m0", DoubleValue (1.0));
-//  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m1", DoubleValue (1.0));
-//  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m2", DoubleValue (1.0));
+//
+//
+//  Ptr<ThreeLogDistancePropagationLossModel> slowFadingLModel = CreateObject<ThreeLogDistancePropagationLossModel> ();
+//
+////Other propagation models
+//
+////  Ptr<FriisPropagationLossModel> slowFadingLModel1 = CreateObject<Cost231PropagationLossModel> ();
+////
+////  SpectrumChannelHelper channelHelper;
+////
+////  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m0", DoubleValue (1.0));
+////  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m1", DoubleValue (1.0));
+////  Config::SetDefault ("ns3::NakagamiPropagationLossModel::m2", DoubleValue (1.0));
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+////  if(enablebuilding)
+////     {
+//
+////       Ptr<MobilityBuildingInfo> buildingInfoEnb = CreateObject<MobilityBuildingInfo> ();
+////       Ptr<MobilityBuildingInfo> buildingInfoUe1 = CreateObject<MobilityBuildingInfo> ();
+////       Ptr<MobilityBuildingInfo> buildingInfoUe2 = CreateObject<MobilityBuildingInfo> ();
+////       Ptr<MobilityBuildingInfo> buildingInfoMovingUe = CreateObject<MobilityBuildingInfo> ();
+//
+////       mmEnb->AggregateObject (buildingInfoEnb); // operation usually done by BuildingsHelper::Install
+////       buildingInfoEnb->MakeConsistent (mmEnb);
+////       mmUe1->AggregateObject (buildingInfoUe1); // operation usually done by BuildingsHelper::Install
+////       buildingInfoUe1->MakeConsistent (mmUe1);
+////       mmUe2->AggregateObject (buildingInfoUe2); // operation usually done by BuildingsHelper::Install
+////       buildingInfoUe2->MakeConsistent (mmUe2);
+////       wayMobility->AggregateObject(buildingInfoMovingUe);
+////       buildingInfoMovingUe->MakeConsistent (wayMobility);
+//
+////       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
+////       lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls", DoubleValue (2));
+////       lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor", DoubleValue (2));
+////       lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor", DoubleValue (2));
+//
+////     }
+////   else
+////     {
+////       // lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::LogDistancePropagationLossModel"));
+////       // lteHelper->SetPathlossModelAttribute("Exponent", DoubleValue (3.0));
+////       // lteHelper->SetPathlossModelAttribute("ReferenceDistance", DoubleValue (10));
+////       // lteHelper->SetPathlossModelAttribute("Frequency", DoubleValue (2120000000));
+//
+////       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
+////       lteHelper->SetPathlossModelAttribute("Exponent0", DoubleValue (1.0));
+////       lteHelper->SetPathlossModelAttribute("Exponent1", DoubleValue (3.0));
+////       lteHelper->SetPathlossModelAttribute("Exponent2", DoubleValue (10.0));
+////       lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue (100));
+////       lteHelper->SetPathlossModelAttribute("Distance1", DoubleValue (200));
+////       lteHelper->SetPathlossModelAttribute("Distance2", DoubleValue (400));
+//// //      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
+//// //      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
+//// //      channelHelper.AddPropagationLoss(fastFadingLModel);
+//// //      channelHelper.AddPropagationLoss(slowFadingLModel1);
+////     }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// lteHelper->SetAttribute ("FadingModel", StringValue ("ns3::TraceFadingLossModel"));
 
+// std::ifstream ifTraceFile;
+// ifTraceFile.open ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad", std::ifstream::in);
+// if (ifTraceFile.good ())
+//   {
+//     // script launched by test.py
+//     lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
+//   }
+// else
+//   {
+//     // script launched as an example
+//     lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
+//   }
 
-
-
-
-
-
-
-
-
-//  if(enablebuilding)
-//     {
-
-//       Ptr<MobilityBuildingInfo> buildingInfoEnb = CreateObject<MobilityBuildingInfo> ();
-//       Ptr<MobilityBuildingInfo> buildingInfoUe1 = CreateObject<MobilityBuildingInfo> ();
-//       Ptr<MobilityBuildingInfo> buildingInfoUe2 = CreateObject<MobilityBuildingInfo> ();
-//       Ptr<MobilityBuildingInfo> buildingInfoMovingUe = CreateObject<MobilityBuildingInfo> ();
-
-//       mmEnb->AggregateObject (buildingInfoEnb); // operation usually done by BuildingsHelper::Install
-//       buildingInfoEnb->MakeConsistent (mmEnb);
-//       mmUe1->AggregateObject (buildingInfoUe1); // operation usually done by BuildingsHelper::Install
-//       buildingInfoUe1->MakeConsistent (mmUe1);
-//       mmUe2->AggregateObject (buildingInfoUe2); // operation usually done by BuildingsHelper::Install
-//       buildingInfoUe2->MakeConsistent (mmUe2);
-//       wayMobility->AggregateObject(buildingInfoMovingUe);
-//       buildingInfoMovingUe->MakeConsistent (wayMobility);
-
-//       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
-//       lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls", DoubleValue (2));
-//       lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor", DoubleValue (2));
-//       lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor", DoubleValue (2));
-
-//     }
-//   else
-//     {
-//       // lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::LogDistancePropagationLossModel"));
-//       // lteHelper->SetPathlossModelAttribute("Exponent", DoubleValue (3.0));
-//       // lteHelper->SetPathlossModelAttribute("ReferenceDistance", DoubleValue (10));
-//       // lteHelper->SetPathlossModelAttribute("Frequency", DoubleValue (2120000000));
-
-//       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
-//       lteHelper->SetPathlossModelAttribute("Exponent0", DoubleValue (1.0));
-//       lteHelper->SetPathlossModelAttribute("Exponent1", DoubleValue (3.0));
-//       lteHelper->SetPathlossModelAttribute("Exponent2", DoubleValue (10.0));
-//       lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue (100));
-//       lteHelper->SetPathlossModelAttribute("Distance1", DoubleValue (200));
-//       lteHelper->SetPathlossModelAttribute("Distance2", DoubleValue (400));
-// //      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
-// //      lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::NakagamiPropagationLossModel"));
-// //      channelHelper.AddPropagationLoss(fastFadingLModel);
-// //      channelHelper.AddPropagationLoss(slowFadingLModel1);
-//     }
-
-
-
-
-
-
-
-
-
-
-
-
- lteHelper->SetAttribute ("FadingModel", StringValue ("ns3::TraceFadingLossModel"));
-
- std::ifstream ifTraceFile;
- ifTraceFile.open ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad", std::ifstream::in);
- if (ifTraceFile.good ())
-   {
-     // script launched by test.py
-     lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
-   }
- else
-   {
-     // script launched as an example
-     lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
-   }
-
- // these parameters have to be set only in case of the trace format
- // differs from the standard one, that is
- // - 10 seconds length trace
- // - 10,000 samples
- // - 0.5 seconds for window size
- // - 100 RB
- lteHelper->SetFadingModelAttribute ("TraceLength", TimeValue (Seconds (10.0)));
- lteHelper->SetFadingModelAttribute ("SamplesNum", UintegerValue (10000));
- lteHelper->SetFadingModelAttribute ("WindowSize", TimeValue (Seconds (0.5)));
- lteHelper->SetFadingModelAttribute ("RbNum", UintegerValue (100));
+// // these parameters have to be set only in case of the trace format
+// // differs from the standard one, that is
+// // - 10 seconds length trace
+// // - 10,000 samples
+// // - 0.5 seconds for window size
+// // - 100 RB
+// lteHelper->SetFadingModelAttribute ("TraceLength", TimeValue (Seconds (10.0)));
+// lteHelper->SetFadingModelAttribute ("SamplesNum", UintegerValue (10000));
+// lteHelper->SetFadingModelAttribute ("WindowSize", TimeValue (Seconds (0.5)));
+// lteHelper->SetFadingModelAttribute ("RbNum", UintegerValue (100));
 
 
   //  movingueMobility.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");
@@ -962,13 +1025,13 @@ int main (int argc, char *argv[])
       };
 
       std::cout << "#";
-      std::cout << std::setw(9) << "time";
+      std::cout << std::setw(5) << "time";
       for (int i = 0; i < numUEsNEW; i++)
       {
-          std::cout << std::setw(11) << "Throughput-UE" << i << "(Mbps)";
+          std::cout << std::setw(13) << "Tput-UE" << i << "(Mbps)";
       }
       std::cout << std::endl;
-      Time binSize = Seconds (0.04);
+      Time binSize = Seconds (0.06);
       Simulator::Schedule (Seconds (0.1), &Throughput1, binSize, throughPutVector, byteCounterVector, oldByteCounterVector, numUEsNEW);
 
     }
