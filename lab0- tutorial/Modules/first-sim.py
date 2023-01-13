@@ -12,13 +12,14 @@ import matplotlib.ticker as ticker
 import sys
 import base64
 import re
-sns.set_style("whitegrid")
 from PIL import Image
 from IPython.display import display, Markdown, Latex
-
 import random
 from datetime import datetime
 
+
+
+sns.set_style("whitegrid")
 curr_dt = datetime.now()
 timestamp = int(round(curr_dt.timestamp()))
 random.seed(timestamp)
@@ -63,12 +64,12 @@ params = {
 }
 
 runs = 1
-print("User Received Power simualtion started...")
+print("User Received Power simulation started...")
 
 campaign.run_missing_simulations(params, runs=runs)
 
 ##########################################################################################
-print("User Received Power simualtion finished!")
+print("User Received Power simulation finished!")
 result_signalpower = campaign.db.get_complete_results(params=params) #Results
 
 campaign_dir = []
