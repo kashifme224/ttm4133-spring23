@@ -92,8 +92,10 @@ def eval_rsrp_rsrq(exa,r):
             # print(tt[l][k])
             # print(rsrp[l][k])
             # print(rsrq[l][k])
+            
 
             dataRes = pd.DataFrame({'time': tt[l][k], 'sig_power': rsrp[l][k], 'sig_quality': rsrq[l][k], 'uid': 'user{}{}'.format(l,k)}, columns=['time', 'sig_power', 'sig_quality', 'uid'])
+
             dataSet.append(dataRes)
             # print("there has been added a dataset")
             keys.append('user{}{}'.format(l,k))
@@ -110,7 +112,8 @@ def eval_rsrp_rsrq(exa,r):
     # print(dataSet)
     
     
-    result = pd.concat(dataSet, keys=keys)
+    #result = pd.concat(dataSet, keys=keys)  old
+    result = pd.concat(dataSet)
 
     return result
 
@@ -218,8 +221,8 @@ def eval_sinr(exa,r):
 
     
 
-
-    result1 = pd.concat(dataSet1, keys=keys1)
+    # old  result1 = pd.concat(dataSet1, keys=keys1)
+    result1 = pd.concat(dataSet1)
 
     return result1
 
@@ -285,7 +288,10 @@ def preprocess_tput(dat):
         res22 = get_tput(num)
         return res22
 
-
 res_signalpower = preprocess_file_rsrp(result_signalpower)
 res_sinr = preprocess_file_sinr(result_sinr)
 res_throughput = preprocess_tput(result_throughput)
+
+# To drop the uid from each data frame.
+#res_signalpower.drop(columns=["uid"], inplace=True)
+#res_sinr.drop(columns=["uid"], inplace=True)
