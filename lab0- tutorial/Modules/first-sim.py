@@ -130,6 +130,8 @@ print("Throughput simulation finished!")
 result_throughput = campaign.db.get_complete_results(params=params) #Results
 
 
+print('All the simulations have been completed successfully...')
+
 # ##########################################################################################
 # print("Simulations finished")    
 
