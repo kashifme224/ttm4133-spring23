@@ -131,7 +131,8 @@ def eval_rsrp_rsrq(exa,r):
             uen = ueList[k]
             uid[l][k].append(str(celln) + str(uen))
         
-            dataRes = pd.DataFrame({'time': tt[l][k], 'sig_power': rsrp[l][k], 'sig_quality': rsrq[l][k], 'uid': 'user{}{}'.format(celln,uen)}, columns=['time', 'sig_power', 'sig_quality', 'uid'])
+            # dataRes = pd.DataFrame({'time': tt[l][k], 'sig_power': rsrp[l][k], 'sig_quality': rsrq[l][k], 'uid': 'user{}{}'.format(celln,uen)}, columns=['time', 'sig_power', 'sig_quality', 'uid'])
+            dataRes = pd.DataFrame({'time': tt[l][k], 'sig_power': rsrp[l][k], 'uid': 'user{}{}'.format(celln,uen)}, columns=['time', 'sig_power', 'uid'])
             
             dataSet.append(dataRes)
             # print("there has been added a dataset")
@@ -291,48 +292,48 @@ res_sinr = preprocess_file_sinr(result_sinr)
 
 # print(uid1)
 
-if sectors == True:
+# if sectors == True:
     
-    res_cu00 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu00 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'sig_power'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user00', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu01 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu01 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'sig_power'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user01', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu02 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu02 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user02', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu10 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu10 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user10', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu11 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu11 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user11', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu12 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu12 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user12', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu20 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu20 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'sig_power'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user20', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu21 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu21 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user21', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_cu22 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'sig_power'], 'sig_quality': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'sig_quality'], 'uid': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'uid']} , columns=['time', 'sig_power', 'sig_quality', 'uid'])
+#     res_cu22 = pd.DataFrame({'time': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'time'], 'sig_power': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'sig_power'],  'uid': res_signalpower.loc[res_signalpower['uid'] == 'user22', 'uid']} , columns=['time', 'sig_power', 'uid'])
 
-    res_signalpower_sec1 = pd.concat([res_cu00, res_cu01, res_cu02])
-    res_signalpower_sec2 = pd.concat([res_cu10, res_cu11, res_cu12])
-    res_signalpower_sec3 = pd.concat([res_cu20, res_cu21, res_cu22])
+#     res_signalpower_sec1 = pd.concat([res_cu00, res_cu01, res_cu02])
+#     res_signalpower_sec2 = pd.concat([res_cu10, res_cu11, res_cu12])
+#     res_signalpower_sec3 = pd.concat([res_cu20, res_cu21, res_cu22])
 
-    res1_cu00 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user00', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user00', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user00', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu00 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user00', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user00', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user00', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu01 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user01', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user01', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user01', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu01 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user01', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user01', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user01', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu02 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user02', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user02', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user02', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu02 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user02', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user02', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user02', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu10 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user10', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user10', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user10', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu10 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user10', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user10', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user10', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu11 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user11', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user11', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user11', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu11 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user11', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user11', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user11', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu12 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user12', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user12', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user12', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu12 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user12', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user12', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user12', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu20 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user20', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user20', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user20', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu20 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user20', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user20', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user20', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu21 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user21', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user21', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user21', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu21 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user21', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user21', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user21', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res1_cu22 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user22', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user22', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user22', 'uid']} , columns=['time', 'sinr', 'uid'])
+#     res1_cu22 = pd.DataFrame({'time': res_sinr.loc[res_sinr['uid'] == 'user22', 'time'], 'sinr': res_sinr.loc[res_sinr['uid'] == 'user22', 'sinr'], 'uid': res_sinr.loc[res_sinr['uid'] == 'user22', 'uid']} , columns=['time', 'sinr', 'uid'])
 
-    res_sinr_sec1 = pd.concat([res1_cu00, res1_cu01, res1_cu02])
-    res_sinr_sec2 = pd.concat([res1_cu10, res1_cu11, res1_cu12])
-    res_sinr_sec3 = pd.concat([res1_cu20, res1_cu22, res1_cu22])
+#     res_sinr_sec1 = pd.concat([res1_cu00, res1_cu01, res1_cu02])
+#     res_sinr_sec2 = pd.concat([res1_cu10, res1_cu11, res1_cu12])
+#     res_sinr_sec3 = pd.concat([res1_cu20, res1_cu22, res1_cu22])
