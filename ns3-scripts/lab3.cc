@@ -28,7 +28,6 @@
 #include "ns3/lte-module.h"
 #include "ns3/flow-monitor-module.h"
 #include <iomanip>
-#include <string>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -314,11 +313,11 @@ Throughput1 (Time binSize, std::vector<double> throughPutVectors, std::vector<ui
 int
 main (int argc, char *argv[])
 {
-  double simTime = 1; //Seconds
+  double simTime = 3; //Seconds
   double d1 = 50;
   Time interPacketInterval = MilliSeconds (1);
-  double eNBTxPowerDbm = 10;
-  double ueTxPowerDbm = 10;
+  double eNBTxPowerDbm = 40;
+  double ueTxPowerDbm = 20;
   uint16_t eNBDlEarfcn = 100;
   uint16_t eNBBandwidth = 25;
 
@@ -332,10 +331,11 @@ main (int argc, char *argv[])
       enableUeNasStates = false, enableEnbRrcStates = false, enableInstTput = false,
       enableFading = false;
   bool enableEpcLogs = false, enableRanLogs=false;
+  uint64_t runId =1 ;
 
   //Parameters from GUI with buildings and UE positions
-  std::string arrayPosUEsString = "[(66.03,-940.34),(-148.56,27.50),]";
-  std::string arrayPoseNBsString = "[(0,0),(0,250),]";
+  std::string arrayPosUEsString = "[(483.9872330323306,-143.0411255890087),(-2337.4383413493247,-2288.6580094241517),]";
+  std::string arrayPoseNBsString = "[(0,0),]";
 
 
   // Command line arguments
@@ -354,6 +354,7 @@ main (int argc, char *argv[])
   cmd.AddValue ("enableRem", "Enable radio environment map", enableRem);
   cmd.AddValue ("enableEpcLogs", "Enable EPC logs", enableEpcLogs);
   cmd.AddValue ("enableRanLogs", "Enable RAN logs", enableRanLogs);
+  cmd.AddValue ("runId", "Randomization parameter", runId);
 
   //Pass parameters into variables
   cmd.AddValue ("arrayPosUEsString", "Positions of UEs", arrayPosUEsString);
@@ -372,14 +373,18 @@ main (int argc, char *argv[])
 
   // parse again so you can override default values from the command line
   cmd.Parse(argc, argv);
+    
+  RngSeedManager::SetRun(runId);
 
 
   if(enableEpcLogs)
     {
       LogLevel logLevel2 = (LogLevel)( LOG_PREFIX_TIME |
-          LOG_PREFIX_NODE | LOG_DEBUG);
+          LOG_PREFIX_NODE | LOG_INFO);
       LogComponentEnable ("EpcMmeApplication", logLevel2);
       LogComponentEnable ("EpcPgwApplication", logLevel2);
+      LogComponentEnable ("EpcPgwApplication", logLevel2);
+
     }
   if(enableRanLogs)
     {
@@ -399,11 +404,11 @@ main (int argc, char *argv[])
 
   Ptr<UniformRandomVariable> enbNoise = CreateObject<UniformRandomVariable> ();
   enbNoise->SetAttribute ("Min", DoubleValue (1));
-  enbNoise->SetAttribute ("Max", DoubleValue (5));
+  enbNoise->SetAttribute ("Max", DoubleValue (1));
 
   Ptr<UniformRandomVariable> ueNoise = CreateObject<UniformRandomVariable> ();
   ueNoise->SetAttribute ("Min", DoubleValue (1));
-  ueNoise->SetAttribute ("Max", DoubleValue (5));
+  ueNoise->SetAttribute ("Max", DoubleValue (1));
 
   Config::SetDefault ("ns3::LteEnbPhy::TxPower", DoubleValue (eNBTxPowerDbm));
   Config::SetDefault ("ns3::LteUePhy::TxPower", DoubleValue (ueTxPowerDbm));
@@ -411,8 +416,6 @@ main (int argc, char *argv[])
   Config::SetDefault ("ns3::LteEnbPhy::NoiseFigure", DoubleValue (enbNoise->GetValue()));
   Config::SetDefault ("ns3::LteAmc::AmcModel", EnumValue (LteAmc::PiroEW2010));
   Config::SetDefault ("ns3::LteAmc::Ber", DoubleValue (0.01));
-  Config::SetDefault ("ns3::LteHelper::UseIdealRrc", BooleanValue (true));
-
 
 
 
@@ -424,7 +427,38 @@ main (int argc, char *argv[])
   lteHelper->SetEnbDeviceAttribute ("UlEarfcn", UintegerValue (eNBDlEarfcn + 18000));
   lteHelper->SetEnbDeviceAttribute ("DlBandwidth", UintegerValue (eNBBandwidth));
   lteHelper->SetEnbDeviceAttribute ("UlBandwidth", UintegerValue (eNBBandwidth));
+
+
+  Ptr<UniformRandomVariable> d0 = CreateObject<UniformRandomVariable> ();
+  d0->SetAttribute ("Min", DoubleValue (1));
+  d0->SetAttribute ("Max", DoubleValue (5));
+  Ptr<UniformRandomVariable> d11 = CreateObject<UniformRandomVariable> ();
+  d11->SetAttribute ("Min", DoubleValue (150));
+  d11->SetAttribute ("Max", DoubleValue (160));
+  Ptr<UniformRandomVariable> d2 = CreateObject<UniformRandomVariable> ();
+  d2->SetAttribute ("Min", DoubleValue (300));
+  d2->SetAttribute ("Max", DoubleValue (310));
+  Ptr<UniformRandomVariable> e0 = CreateObject<UniformRandomVariable> ();
+  e0->SetAttribute ("Min", DoubleValue (2.95));
+  e0->SetAttribute ("Max", DoubleValue (3.95));
+  Ptr<UniformRandomVariable> e1 = CreateObject<UniformRandomVariable> ();
+  e1->SetAttribute ("Min", DoubleValue (4.4));
+  e1->SetAttribute ("Max", DoubleValue (5.0));
+  Ptr<UniformRandomVariable> e2 = CreateObject<UniformRandomVariable> ();
+  e2->SetAttribute ("Min", DoubleValue (5.8));
+  e2->SetAttribute ("Max", DoubleValue (6.2));
+
+
+//  std::cout<< "d0: " << d0->GetValue() << ", d1: " << d1->GetValue() << ", d2: " << d2->GetValue() << ", e0: " << e0->GetValue() << ", e1: " << e1->GetValue() << ", e2: " << e2->GetValue() << std::endl;
+
   lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
+
+  lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue(d0->GetValue()));
+  lteHelper->SetPathlossModelAttribute("Distance1", DoubleValue(d11->GetValue()));
+  lteHelper->SetPathlossModelAttribute("Distance2", DoubleValue(d2->GetValue()));
+  lteHelper->SetPathlossModelAttribute("Exponent0", DoubleValue(e0->GetValue()));
+  lteHelper->SetPathlossModelAttribute("Exponent1", DoubleValue(e1->GetValue()));
+  lteHelper->SetPathlossModelAttribute("Exponent2", DoubleValue(e2->GetValue()));
 
   if(enableFading)
     {
@@ -483,6 +517,7 @@ main (int argc, char *argv[])
   // Create Nodes: eNodeB and UE
   NodeContainer eNBNodesArg;
   NodeContainer ueNodesArg;
+
   //NodeContainer movingNodes;
   //movingueNodes.Create(1);
 
