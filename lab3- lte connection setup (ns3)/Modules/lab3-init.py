@@ -18,6 +18,15 @@ from IPython.display import display, Markdown, Latex
 #include json library
 import json
 
+import random
+from datetime import datetime
+
+curr_dt = datetime.now()
+timestamp = int(round(curr_dt.timestamp()))
+random.seed(timestamp)
+
+runid = random.randint(1,100)
+
 print("List of created simulations: ")
 print(" ")
 
@@ -125,12 +134,12 @@ txpower = int(json_data["txPower"])
 uePos = ''.join(uetemp)
 eNBPos = ''.join(enbtemp)
 
-print(uePos)
-print(eNBPos)
-print(txpower)
+# print(uePos)
+# print(eNBPos)
+# print(txpower)
 
 
-res_path = 'results-uestates' + '-' + ''.join(json_data["name"]) + '-' + str(txpower)                                # result path for naming outstreams
+res_path = 'results-uestates' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid)                                # result path for naming outstreams
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', res_path))
 
 
@@ -143,6 +152,7 @@ params = {
     'eNBTxPowerDbm': txpower,
     'arrayPosUEsString': uePos,
     'arrayPoseNBsString' :eNBPos,
+    'runId': runid,
 }
 
 log_components = {
@@ -173,7 +183,7 @@ campaign_dir = []
 campaign = []
 
 
-res_path = 'results-enbstates' + '-' + ''.join(json_data["name"]) + '-' + str(txpower)                                # result path for naming outstreams
+res_path = 'results-enbstates' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid)                                # result path for naming outstreams
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', res_path))
 
 
@@ -186,6 +196,7 @@ params = {
     'eNBTxPowerDbm': txpower,
     'arrayPosUEsString': uePos,
     'arrayPoseNBsString' :eNBPos,
+    'runId': runid,
 }
 
 log_components = {
