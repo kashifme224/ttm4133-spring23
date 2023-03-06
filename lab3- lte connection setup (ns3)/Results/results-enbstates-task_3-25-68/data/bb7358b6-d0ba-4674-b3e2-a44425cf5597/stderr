@@ -1,0 +1,2 @@
++0.000000000s -1 PointToPointEpcHelper:AddEnb(): [LOGIC] Ipv4 ifaces of the eNB after installing p2p dev: 1
++0.000000000s -1 PointToPointEpcHelper:AddEnb(): [LOGIC] number of Ipv4 ifaces of the eNB after assigning Ipv4 addr to S1 dev: 2

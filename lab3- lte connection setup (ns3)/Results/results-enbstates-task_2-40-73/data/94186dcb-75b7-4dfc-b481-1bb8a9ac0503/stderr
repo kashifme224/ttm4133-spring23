@@ -1,0 +1,16 @@
++0.000000000s -1 PointToPointEpcHelper:AddEnb(): [LOGIC] Ipv4 ifaces of the eNB after installing p2p dev: 1
++0.000000000s -1 PointToPointEpcHelper:AddEnb(): [LOGIC] number of Ipv4 ifaces of the eNB after assigning Ipv4 addr to S1 dev: 2
++0.260214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] cellId 1 IMSI 1
++0.260214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] BearerContextsToBeCreated size = 1
++0.260214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] bearerId 1 SGW 10.0.0.6 TEID 1
++0.260214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] BearerContextsCreated size = 1
++0.260214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] Send CreateSessionResponse to SGW 14.0.0.6
++2.460214285s 4 EpcEnbApplication:DoUeContextRelease(): [INFO ] TEID: 1 erased
++2.460214285s 4 EpcEnbApplication:DoUeContextRelease(): [INFO ] RNTI: 1 erased
++2.460214365s 0 EpcPgwApplication:DoRecvDeleteBearerCommand(): [DEBUG] ebid 1
++2.460214365s 0 EpcPgwApplication:DoRecvDeleteBearerCommand(): [DEBUG] Send DeleteBearerRequest to SGW 14.0.0.6
++2.660214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] cellId 1 IMSI 1
++2.660214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] BearerContextsToBeCreated size = 1
++2.660214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] bearerId 1 SGW 10.0.0.6 TEID 2
++2.660214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] BearerContextsCreated size = 1
++2.660214549s 0 EpcPgwApplication:DoRecvCreateSessionRequest(): [DEBUG] Send CreateSessionResponse to SGW 14.0.0.6

@@ -1,0 +1,21 @@
++0.000000000s -1 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_START --> IDLE_CELL_SEARCH
++0.200000000s -1 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_CELL_SEARCH --> IDLE_WAIT_MIB_SIB1
++0.200214285s 4 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_WAIT_MIB_SIB1 --> IDLE_WAIT_SIB1
++0.205214285s 4 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_WAIT_SIB1 --> IDLE_CAMPED_NORMALLY
++0.205214285s 4 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_CAMPED_NORMALLY --> IDLE_WAIT_SIB2
++0.256000000s -1 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 0 UeRrc IDLE_WAIT_SIB2 --> IDLE_RANDOM_ACCESS
++0.258000000s 5 LteEnbMac:DoSubframeIndication(): [INFO ] 0x557924701d00 preambleId 19: 1 received
++0.258000000s 5 LteEnbRrc:GetNewSrsConfigurationIndex(): [DEBUG] 0x5579247026c0 SRS p 40 set 0
++0.258000000s 5 LteEnbRrc:AddUe(): [DEBUG] 0x5579247026c0 New UE RNTI 1 cellId 1 srs CI 37
++0.258000000s 5 LteEnbMac:DoSubframeIndication(): [INFO ] preambleId 19: allocated T-C-RNTI 1, sending RAR
++0.258000000s 5 LteEnbMac:DoSchedDlConfigInd(): [INFO ] 0x557924701d00 Send RAR message to RNTI 1 rapId 19
++0.260214285s 4 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 1 UeRrc IDLE_RANDOM_ACCESS --> IDLE_CONNECTING
++0.260214285s 4 LteRrcProtocolIdeal:SetEnbRrcSapProvider(): [DEBUG] RNTI 1 connected to cell 1
++0.260214285s 4 LteUeRrc:SwitchToState(): [INFO ] 0x5579246d1b10 IMSI 1 RNTI 1 UeRrc IDLE_CONNECTING --> CONNECTED_NORMALLY
++0.260214785s 2 LteEnbRrc:SetupDataRadioBearer(): [DEBUG] 0x55792464d9d0 RNTI 1Lcid 3 lcGroup 2 ComponentCarrierId 0
++0.260214785s 2 LteUeRrc:DoRecvRrcConnectionReconfiguration(): [INFO ] DoRecvRrcConnectionReconfiguration haveNonCriticalExtension:0
++0.260214785s 2 LteUeRrc:DoRecvRrcConnectionReconfiguration(): [INFO ] haveMobilityControlInfo == false
++0.260214785s 2 LteUeRrc:ApplyRadioResourceConfigDedicated(): [INFO ] request to modify SRB1 (skipping as currently not implemented)
++0.260214785s 2 LteUeRrc:ApplyRadioResourceConfigDedicated(): [INFO ] 0x5579246d1b10 IMSI 1 adding/modifying DRBID 1 LC 3
++0.260214785s 2 LteUeRrc:ApplyRadioResourceConfigDedicated(): [INFO ] New Data Radio Bearer
++0.260214785s 2 LteRrcProtocolIdeal:SetEnbRrcSapProvider(): [DEBUG] RNTI 1 connected to cell 1
