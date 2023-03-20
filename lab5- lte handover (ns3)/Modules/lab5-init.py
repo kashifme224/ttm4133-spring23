@@ -221,7 +221,7 @@ res_path = 'results-rsrp' + '-' + ''.join(json_data["name"]) + '-' + str(txpower
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))
 campaign = sem.CampaignManager.new(ns_path, script, campaign_dir, overwrite=True,           #create a new sem campaign
                                        check_repo = False, max_parallel_processes=4)
-print("RSRP and RSRQ simualtions...")
+print("RSRP and RSRQ simulation running...")
 params = {
     'testPos': combPos,
     'enablersrp': True,
@@ -241,7 +241,7 @@ counter = counter+1
 campaign_dir = []
 campaign = []
 
-print("SINR simualtions...")
+print("SINR simulation running...")
 
 res_path = 'results-sinr' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid)   
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))
@@ -265,7 +265,7 @@ counter = counter+1
 campaign_dir = []
 campaign = []
 
-print("Throughput simualtions...")
+print("Throughput simulation running...")
 
 res_path = 'results-tput' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid)   
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))

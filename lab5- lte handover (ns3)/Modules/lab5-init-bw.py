@@ -71,7 +71,7 @@ simulationsArray = simulations.split(',')                                       
 print("")
 print("Please enter the following required parameters:")
 while True:
-    print("Enter the carrier bandwidth for 1st eNB (valid values in MHz: 1.4,3,5,10,15,20)")
+    print("Enter the channel bandwidth for 1st eNB (valid values in MHz: 1.4,3,5,10,15,20)")
     t11 = float(input())
     if t11 == 1.4:
         bandwidth1 = 6
@@ -94,7 +94,7 @@ while True:
     if bandwidth1 == []:
         continue
 while True:
-    print("Enter the carrier bandwidth for 2nd eNB (valid values in MHz: 1.4,3,5,10,15,20)")
+    print("Enter the channel bandwidth for 2nd eNB (valid values in MHz: 1.4,3,5,10,15,20)")
     t12 = float(input())
     if t12 == 1.4:
         bandwidth2 = 6
@@ -119,7 +119,7 @@ while True:
 
 apnd2 = []
 while True:        
-    print("Enable different center frequencies in eNBs (yes OR y OR no OR n):")    
+    print("Enable different carrier frequencies in eNBs (yes OR y OR no OR n):")    
     t13 = input()
     if t13 == 'y':
         enablediffreq = True
@@ -141,7 +141,7 @@ while True:
         continue
     
 
-print("Carrier bandwidth for the eNBs is (MHz): ", t11, t12)
+print("Channel bandwidth for the eNBs is (MHz): ", t11, t12)
     
     
 
@@ -267,7 +267,7 @@ res_path = 'results-rsrp' + '-' + ''.join(json_data["name"]) + '-' + str(txpower
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))
 campaign = sem.CampaignManager.new(ns_path, script, campaign_dir, overwrite=True,           #create a new sem campaign
                                        check_repo = False, max_parallel_processes=4)
-print("RSRP and RSRQ simualtions...")
+print("RSRP and RSRQ simulation running...")
 params = {
     'testPos': combPos,
     'enablersrp': True,
@@ -290,7 +290,7 @@ counter = counter+1
 campaign_dir = []
 campaign = []
 
-print("SINR simualtions...")
+print("SINR simulation running...")
 
 res_path = 'results-sinr' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid) + '-' + str(bandwidth1) + '-' + str(bandwidth2) + '-' + apnd2   
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))
@@ -317,7 +317,7 @@ counter = counter+1
 campaign_dir = []
 campaign = []
 
-print("Throughput simualtions...")
+print("Throughput simulation running...")
 
 res_path = 'results-tput' + '-' + ''.join(json_data["name"]) + '-' + str(txpower) + '-' + str(runid) + '-' + str(bandwidth1) + '-' + str(bandwidth2) + '-' + apnd2   
 campaign_dir = os.path.normpath(os.path.join(os.getcwd(), 'Results', str(apnd), res_path))

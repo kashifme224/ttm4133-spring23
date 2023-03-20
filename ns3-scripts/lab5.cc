@@ -163,7 +163,7 @@ main (int argc, char *argv[])
   double hEnb = 30.0, hUe = 1.0;
 
   bool disableDl = false, disableUl = false, enablersrp = false, enablesinrue = false, enableTraces = true, enableInstTput = false;
-  bool enableFading = false; bool enablebuilding = false, enableX2 = false, a2a4Ho = true, a3Ho = false, enable_diff_freq = false;
+  bool enableFading = false; bool enablebuilding = false, enableX2 = false, a2a4Ho = false, a3Ho = true, enable_diff_freq = false;
   uint8_t a2a4SCellThreshold = 30, a2a4neighborCellOffset = 1;
 
   std::string testPos = "es(0,0),(2287.9396470619276,5.501581753424205),ee_bs(0,0),be_usue_ms(-637.9831708153451,-847.24359002721),(-456.4879584282212,-797.7293542463997),(2859.924558827409,-935.2688980819853),me_";
@@ -189,11 +189,11 @@ main (int argc, char *argv[])
 
   Ptr<UniformRandomVariable> enbNoise = CreateObject<UniformRandomVariable> ();
   enbNoise->SetAttribute ("Min", DoubleValue (1));
-  enbNoise->SetAttribute ("Max", DoubleValue (2));
+  enbNoise->SetAttribute ("Max", DoubleValue (1));
 
   Ptr<UniformRandomVariable> ueNoise = CreateObject<UniformRandomVariable> ();
   ueNoise->SetAttribute ("Min", DoubleValue (1));
-  ueNoise->SetAttribute ("Max", DoubleValue (2));
+  ueNoise->SetAttribute ("Max", DoubleValue (1));
 
   Config::SetDefault ("ns3::LteEnbPhy::TxPower", DoubleValue (eNBTxPowerDbm));
   Config::SetDefault ("ns3::LteUePhy::TxPower", DoubleValue (ueTxPowerDbm));
@@ -209,6 +209,9 @@ main (int argc, char *argv[])
   lteHelper->SetEnbDeviceAttribute ("DlBandwidth", UintegerValue (eNBBandwidth));
   lteHelper->SetEnbDeviceAttribute ("UlBandwidth", UintegerValue (eNBBandwidth));
   lteHelper->SetSchedulerType ("ns3::RrFfMacScheduler");
+    
+  Config::SetDefault("ns3::LteUePhy::UeMeasurementsFilterPeriod", TimeValue(MilliSeconds(100)));
+  Config::SetDefault("ns3::LteUePhy::RsrpSinrSamplePeriod", UintegerValue(100));
 
   if(enableX2)
     {
@@ -221,8 +224,8 @@ main (int argc, char *argv[])
       if(a3Ho)
         {
           lteHelper->SetHandoverAlgorithmType ("ns3::A3RsrpHandoverAlgorithm");
-          lteHelper->SetHandoverAlgorithmAttribute ("Hysteresis", DoubleValue (3));
-          lteHelper->SetHandoverAlgorithmAttribute ("TimeToTrigger", TimeValue (MilliSeconds (256)));
+          lteHelper->SetHandoverAlgorithmAttribute ("Hysteresis", DoubleValue (2));
+          lteHelper->SetHandoverAlgorithmAttribute ("TimeToTrigger", TimeValue (MilliSeconds (16)));
         }
     }
 
@@ -314,16 +317,16 @@ main (int argc, char *argv[])
     {
       Ptr<UniformRandomVariable> iwl = CreateObject<UniformRandomVariable> ();
       iwl->SetAttribute ("Min", DoubleValue (1));
-      iwl->SetAttribute ("Max", DoubleValue (3));
+      iwl->SetAttribute ("Max", DoubleValue (5));
       Ptr<UniformRandomVariable> ssew = CreateObject<UniformRandomVariable> ();
       ssew->SetAttribute ("Min", DoubleValue (1));
-      ssew->SetAttribute ("Max", DoubleValue (3));
+      ssew->SetAttribute ("Max", DoubleValue (5));
       Ptr<UniformRandomVariable> sso = CreateObject<UniformRandomVariable> ();
       sso->SetAttribute ("Min", DoubleValue (1));
-      sso->SetAttribute ("Max", DoubleValue (3));
+      sso->SetAttribute ("Max", DoubleValue (5));
       Ptr<UniformRandomVariable> ssi = CreateObject<UniformRandomVariable> ();
       ssi->SetAttribute ("Min", DoubleValue (1));
-      ssi->SetAttribute ("Max", DoubleValue (3));
+      ssi->SetAttribute ("Max", DoubleValue (5));
 
       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
       lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls", DoubleValue (ssew->GetValue()));
@@ -334,23 +337,23 @@ main (int argc, char *argv[])
   else
     {
       Ptr<UniformRandomVariable> d0 = CreateObject<UniformRandomVariable> ();
-      d0->SetAttribute ("Min", DoubleValue (1));
-      d0->SetAttribute ("Max", DoubleValue (5));
+      d0->SetAttribute ("Min", DoubleValue (0)); //1
+      d0->SetAttribute ("Max", DoubleValue (100)); //5
       Ptr<UniformRandomVariable> d1 = CreateObject<UniformRandomVariable> ();
-      d1->SetAttribute ("Min", DoubleValue (150));
-      d1->SetAttribute ("Max", DoubleValue (160));
+      d1->SetAttribute ("Min", DoubleValue (100)); //150
+      d1->SetAttribute ("Max", DoubleValue (250)); //160
       Ptr<UniformRandomVariable> d2 = CreateObject<UniformRandomVariable> ();
-      d2->SetAttribute ("Min", DoubleValue (300));
-      d2->SetAttribute ("Max", DoubleValue (310));
+      d2->SetAttribute ("Min", DoubleValue (250)); //300
+      d2->SetAttribute ("Max", DoubleValue (350)); //310
       Ptr<UniformRandomVariable> e0 = CreateObject<UniformRandomVariable> ();
-      e0->SetAttribute ("Min", DoubleValue (2.95));
-      e0->SetAttribute ("Max", DoubleValue (3.5));
+      e0->SetAttribute ("Min", DoubleValue (1)); //2.95
+      e0->SetAttribute ("Max", DoubleValue (1.5)); //3.5)
       Ptr<UniformRandomVariable> e1 = CreateObject<UniformRandomVariable> ();
-      e1->SetAttribute ("Min", DoubleValue (4.4));
-      e1->SetAttribute ("Max", DoubleValue (5));
+      e1->SetAttribute ("Min", DoubleValue (2.5)); //4.4
+      e1->SetAttribute ("Max", DoubleValue (3.5)); //5
       Ptr<UniformRandomVariable> e2 = CreateObject<UniformRandomVariable> ();
-      e2->SetAttribute ("Min", DoubleValue (5.8));
-      e2->SetAttribute ("Max", DoubleValue (6.2));
+      e2->SetAttribute ("Min", DoubleValue (5)); // 5.8
+      e2->SetAttribute ("Max", DoubleValue (6)); //6.2
 
       lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::ThreeLogDistancePropagationLossModel"));
       lteHelper->SetPathlossModelAttribute("Distance0", DoubleValue(d0->GetValue()));
@@ -366,16 +369,16 @@ main (int argc, char *argv[])
       lteHelper->SetAttribute ("FadingModel", StringValue ("ns3::TraceFadingLossModel"));
 
       std::ifstream ifTraceFile;
-      ifTraceFile.open ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad", std::ifstream::in);
+      ifTraceFile.open ("../../src/lte/model/fading-traces/fading_trace_ETU_3kmph.fad", std::ifstream::in);
       if (ifTraceFile.good ())
         {
           // script launched by test.py
-          lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("../../src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
+          lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("../../src/lte/model/fading-traces/fading_trace_ETU_3kmph.fad"));
         }
       else
         {
           // script launched as an example
-          lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("src/lte/model/fading-traces/fading_trace_EPA_3kmph.fad"));
+          lteHelper->SetFadingModelAttribute ("TraceFilename", StringValue ("src/lte/model/fading-traces/fading_trace_ETU_3kmph.fad"));
         }
 
       // these parameters have to be set only in case of the trace format
@@ -488,12 +491,20 @@ main (int argc, char *argv[])
     }
   Ptr<WaypointMobilityModel> wayMobility;
   wayMobility = mobileueNodesArg.Get(0)->GetObject<WaypointMobilityModel>();
-  for(int i = 0; i < numMobUePathNEW*2; i+=2)
+  for(int i = 0; i < numMobUePathNEW*2 ; i+=2)
     {
       float x = mobUEPathCords.at(i);
       float y = mobUEPathCords.at(i+1);
-      wayMobility->AddWaypoint(Waypoint(Seconds(simTime - (simTime/(i + 1))), Vector3D(x, y, hUe)));
+      if(i == 0)
+      {
+          wayMobility->AddWaypoint(Waypoint(Seconds(simTime - (simTime/(i + 1))), Vector3D(x, y, hUe)));
+      }
+      else
+      {
+          wayMobility->AddWaypoint(Waypoint(Seconds(simTime - (simTime*0.0001)), Vector3D(x, y, hUe)));
+      }
     }
+    
 
   // Install LTE Devices to the nodes
   NetDeviceContainer enbLteDevs = lteHelper->InstallEnbDevice (eNBNodesArg);
@@ -522,8 +533,8 @@ main (int argc, char *argv[])
           enb2->SetUlBandwidth(bw2);
           if(enable_diff_freq)
           {
-              enb2->SetDlEarfcn(eNBDlEarfcn * 6);
-              enb2->SetUlEarfcn(eNBDlEarfcn * 6 + 18000);
+              enb2->SetDlEarfcn(eNBDlEarfcn * 8);
+              enb2->SetUlEarfcn(eNBDlEarfcn * 8 + 18000);
           }
 
         }
@@ -638,8 +649,8 @@ main (int argc, char *argv[])
               std::cout << std::setw(13) << "Tput-UE" << i << "(Mbps)";
             }
           std::cout << std::endl;
-          Time binSize = Seconds (0.05);
-          Simulator::Schedule (Seconds (0), &Throughput1, binSize, throughPutVector, byteCounterVector, oldByteCounterVector, total_ues);
+          Time binSize = MilliSeconds (50);
+          Simulator::Schedule (startTime, &Throughput1, binSize, throughPutVector, byteCounterVector, oldByteCounterVector, total_ues);
         }
     }
 
